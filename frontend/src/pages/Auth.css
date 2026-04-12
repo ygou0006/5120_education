@@ -1,0 +1,10 @@
+.auth-page {
+  min-height: 80vh;
+  padding-top: 8px;
+  padding-bottom: 40px;
+}
+
+.auth-card {
+  background: white;
+  border-radius: 12px;
+}

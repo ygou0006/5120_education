@@ -1,0 +1,22 @@
+.careers-page {
+  max-width: 1400px;
+  margin: 0 auto;
+  margin-top: 62px;
+}
+
+.career-card {
+  transition: transform 0.3s;
+}
+
+.career-card:hover {
+  transform: translateY(-4px);
+}
+
+.page-link {
+  color: var(--primary-color);
+}
+
+.active>.page-link {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border-color: var(--primary-color);
+}

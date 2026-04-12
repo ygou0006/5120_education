@@ -1,0 +1,11 @@
+.career-detail {
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: 62px;
+}
+
+.chart-container {
+  background: white;
+  padding: 1rem;
+  border-radius: 8px;
+}

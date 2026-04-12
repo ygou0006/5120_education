@@ -1,0 +1,31 @@
+.results-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  margin-top: 62px;
+}
+
+.result-card {
+  transition: transform 0.3s;
+}
+
+.result-card:hover {
+  transform: translateY(-4px);
+}
+
+.score-bar {
+  height: 8px;
+  background: #e5e7eb;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.score-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #667eea, #764ba2);
+  transition: width 0.3s;
+}
+
+.compare-bar {
+  background: #333;
+  box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+}
