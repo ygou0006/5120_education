@@ -68,8 +68,11 @@ export const careersAPI = {
   getSalary: (id: number) => api.get<SalaryTrend[]>(`/careers/${id}/salary`),
   getRegional: (id: number) => api.get<RegionalEmployment[]>(`/careers/${id}/regional`),
   getFutureOutcome: (id: number) => api.get<FutureOutcome>(`/careers/${id}/outlook`),
-  search: (q: string, skip: number = 0, limit: number = 20) => 
-    api.get<{data: Occupation[]; total: number; page: number; per_page: number; total_pages: number}>(`/careers/search/list?q=${encodeURIComponent(q)}&skip=${skip}&limit=${limit}`),
+  search: (q: string, skip: number = 0, limit: number = 20, fields?: string) => {
+    let url = `/careers/search/list?q=${encodeURIComponent(q)}&skip=${skip}&limit=${limit}`;
+    if (fields) url += `&fields=${fields}`;
+    return api.get<{data: Occupation[]; total: number; page: number; per_page: number; total_pages: number}>(url);
+  },
 };
 
 export const matchAPI = {
