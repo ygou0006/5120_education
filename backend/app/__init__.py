@@ -10,8 +10,12 @@ db = SQLAlchemy()
 def create_app():
     base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     static_dir = os.path.join(base_dir, 'static')
+    upload_images_dir = os.path.join(static_dir, 'upload_images')
     
     app = Flask(__name__)
+    
+    if not os.path.exists(upload_images_dir):
+        os.makedirs(upload_images_dir)
     
     app.config['SECRET_KEY'] = settings.secret_key
     app.config['SQLALCHEMY_DATABASE_URI'] = settings.database_url
@@ -53,6 +57,10 @@ def create_app():
     @app.route('/health')
     def health_check():
         return {"status": "healthy"}
+
+    @app.route('/static/upload_images/<path:filename>')
+    def serve_upload_image(filename):
+        return send_from_directory(upload_images_dir, filename)
 
     @app.route('/<path:path>')
     def handle_spa(path):

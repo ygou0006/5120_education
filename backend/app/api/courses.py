@@ -12,7 +12,7 @@ def course_to_dict(course):
         "code": course.code,
         "category": course.category,
         "description": course.description,
-        "image_base64": course.image_base64,
+        "image": course.image,
         "icon_name": course.icon_name,
         "color_code": course.color_code,
         "display_order": course.display_order,

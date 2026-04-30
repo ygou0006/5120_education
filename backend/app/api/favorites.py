@@ -11,7 +11,7 @@ def occupation_to_dict(occupation):
         "anzsco_code": occupation.anzsco_code,
         "title": occupation.title,
         "description": occupation.description,
-        "image_base64": occupation.image_base64,
+        "image": occupation.image,
         "category": occupation.category,
         "sub_category": occupation.sub_category,
         "skill_level": occupation.skill_level,

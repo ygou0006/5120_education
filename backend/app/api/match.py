@@ -23,9 +23,11 @@ def match_careers():
     # Base query - get all active occupations
     query = db.session.query(
         models.Occupation.id,
+        models.Occupation.anzsco_code,
         models.Occupation.title,
-        models.Occupation.image_base64,
-        models.Occupation.category
+        models.Occupation.image,
+        models.Occupation.category,
+        models.Occupation.description
     ).filter(models.Occupation.is_active == True)
     
     # Calculate course score
@@ -76,15 +78,15 @@ def match_careers():
     # Calculate final score
     results = []
     for row in results_raw:
-        occ_id, title, image_base64, category = row[0], row[1], row[2], row[3]
+        occ_id, anzsco_code, title, image, category, description = row[0], row[1], row[2], row[3], row[4], row[5]
         
         course_score = 0
-        if course_score_expr is not None and len(row) > 4:
-            course_score = float(row[4]) if row[4] else 0
+        if course_score_expr is not None and len(row) > 6:
+            course_score = float(row[6]) if row[6] else 0
         
         interest_score = 0
         if interest_score_expr is not None:
-            idx = 5 if course_score_expr is not None else 4
+            idx = 7 if course_score_expr is not None else 6
             if len(row) > idx:
                 interest_score = float(row[idx]) if row[idx] else 0
         
@@ -99,8 +101,9 @@ def match_careers():
             results.append({
                 "occupation_id": occ_id,
                 "title": title,
-                "image_base64": image_base64,
+                "image": image,
                 "category": category,
+                "description": description,
                 "match_score": round(final_score, 2)
             })
     

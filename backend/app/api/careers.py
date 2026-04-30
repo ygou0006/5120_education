@@ -6,13 +6,13 @@ from app.models import models
 bp = Blueprint('careers', __name__)
 
 
-def occupation_to_dict(occupation):
-    return {
+def occupation_to_dict(occupation, fields=None):
+    all_fields = {
         "id": occupation.id,
         "anzsco_code": occupation.anzsco_code,
         "title": occupation.title,
         "description": occupation.description,
-        "image_base64": occupation.image_base64,
+        "image": occupation.image,
         "category": occupation.category,
         "sub_category": occupation.sub_category,
         "skill_level": occupation.skill_level,
@@ -20,8 +20,16 @@ def occupation_to_dict(occupation):
         "work_type": occupation.work_type,
         "work_hours": occupation.work_hours,
         "main_tasks": occupation.main_tasks,
+        "pathway": occupation.pathway,
+        "alternative_pathways": occupation.alternative_pathways,
         "is_active": occupation.is_active
     }
+    
+    if fields is None:
+        return all_fields
+    
+    requested = [f.strip() for f in fields.split(",")]
+    return {k: v for k, v in all_fields.items() if k in requested}
 
 
 def employment_to_dict(data):
@@ -128,6 +136,7 @@ def search_careers():
     q = request.args.get("q", "")
     skip = request.args.get("skip", 0, type=int)
     limit = request.args.get("limit", 20, type=int)
+    fields = request.args.get("fields", None)
     
     query = db.session.query(models.Occupation).filter(
         models.Occupation.is_active == True,
@@ -141,7 +150,7 @@ def search_careers():
     total = query.count()
     occupations = query.offset(skip).limit(limit).all()
     return jsonify({
-        "data": [occupation_to_dict(o) for o in occupations],
+        "data": [occupation_to_dict(o, fields) for o in occupations],
         "total": total,
         "page": skip // limit + 1,
         "per_page": limit,

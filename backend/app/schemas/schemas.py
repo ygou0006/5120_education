@@ -57,7 +57,7 @@ class CourseBase(BaseModel):
     code: str
     category: Optional[str] = None
     description: Optional[str] = None
-    image_base64: Optional[str] = None
+    image: Optional[str] = None
     icon_name: Optional[str] = None
     color_code: Optional[str] = None
 
@@ -72,7 +72,7 @@ class CourseUpdate(CourseBase):
     code: Optional[str] = None
     category: Optional[str] = None
     description: Optional[str] = None
-    image_base64: Optional[str] = None
+    image: Optional[str] = None
     icon_name: Optional[str] = None
     color_code: Optional[str] = None
     display_order: Optional[int] = None
@@ -121,7 +121,7 @@ class OccupationBase(BaseModel):
     anzsco_code: str
     title: str
     description: Optional[str] = None
-    image_base64: Optional[str] = None
+    image: Optional[str] = None
     category: Optional[str] = None
     sub_category: Optional[str] = None
     skill_level: Optional[int] = None
@@ -129,6 +129,8 @@ class OccupationBase(BaseModel):
     work_type: Optional[str] = None
     work_hours: Optional[str] = None
     main_tasks: Optional[str] = None
+    pathway: Optional[str] = None
+    alternative_pathways: Optional[str] = None
 
 
 class OccupationCreate(OccupationBase):
@@ -139,7 +141,7 @@ class OccupationUpdate(OccupationBase):
     anzsco_code: Optional[str] = None
     title: Optional[str] = None
     description: Optional[str] = None
-    image_base64: Optional[str] = None
+    image: Optional[str] = None
     category: Optional[str] = None
     sub_category: Optional[str] = None
     skill_level: Optional[int] = None
@@ -147,6 +149,8 @@ class OccupationUpdate(OccupationBase):
     work_type: Optional[str] = None
     work_hours: Optional[str] = None
     main_tasks: Optional[str] = None
+    pathway: Optional[str] = None
+    alternative_pathways: Optional[str] = None
     is_active: Optional[bool] = None
 
 
@@ -260,7 +264,7 @@ class CareerMatchRequest(BaseModel):
 class CareerMatchResponse(BaseModel):
     occupation_id: int
     title: str
-    image_base64: Optional[str] = None
+    image: Optional[str] = None
     category: Optional[str] = None
     match_score: float
 

@@ -2,8 +2,26 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy import func
 from app import db
 from app.models import models
+from app.utils.images import save_image_from_base64, delete_image
+import base64
 
 bp = Blueprint('admin', __name__)
+
+MAX_IMAGE_SIZE = 8 * 1024 * 1024  # 8MB
+
+
+def validate_image_size(base64_string: str) -> tuple[bool, str]:
+    if not base64_string:
+        return True, ""
+    try:
+        if "," in base64_string:
+            base64_string = base64_string.split(",")[1]
+        size_bytes = len(base64_string) * 3 / 4
+        if size_bytes > MAX_IMAGE_SIZE:
+            return False, "Image size cannot exceed 8MB"
+        return True, ""
+    except Exception:
+        return False, "Invalid image format"
 
 
 def require_admin():
@@ -40,7 +58,7 @@ def course_to_dict(course):
         "code": course.code,
         "category": course.category,
         "description": course.description,
-        "image_base64": course.image_base64,
+        "image": course.image,
         "icon_name": course.icon_name,
         "color_code": course.color_code,
         "display_order": course.display_order,
@@ -66,7 +84,7 @@ def occupation_to_dict(occupation):
         "anzsco_code": occupation.anzsco_code,
         "title": occupation.title,
         "description": occupation.description,
-        "image_base64": occupation.image_base64,
+        "image": occupation.image,
         "category": occupation.category,
         "sub_category": occupation.sub_category,
         "skill_level": occupation.skill_level,
@@ -74,6 +92,8 @@ def occupation_to_dict(occupation):
         "work_type": occupation.work_type,
         "work_hours": occupation.work_hours,
         "main_tasks": occupation.main_tasks,
+        "pathway": occupation.pathway,
+        "alternative_pathways": occupation.alternative_pathways,
         "is_active": occupation.is_active
     }
 
@@ -139,10 +159,26 @@ def create_course():
         return result
     
     data = request.get_json()
+    image_base64 = data.pop('image_base64', None)
+    
+    if image_base64:
+        valid, error_msg = validate_image_size(image_base64)
+        if not valid:
+            return jsonify({"detail": error_msg}), 400
+    
     db_course = models.Course(**data)
     db.session.add(db_course)
     db.session.commit()
     db.session.refresh(db_course)
+    
+    if image_base64:
+        db_course.image_base64 = image_base64
+        image_url = save_image_from_base64(image_base64, overwrite=True)
+        if image_url:
+            db_course.image = image_url
+        db.session.commit()
+        db.session.refresh(db_course)
+    
     return jsonify(course_to_dict(db_course)), 201
 
 
@@ -157,9 +193,26 @@ def update_course(course_id):
         return jsonify({"detail": "Course not found"}), 404
     
     data = request.get_json()
+    image_base64 = data.pop('image_base64', None)
+    
+    if image_base64:
+        valid, error_msg = validate_image_size(image_base64)
+        if not valid:
+            return jsonify({"detail": error_msg}), 400
+
+        if db_course.image:
+            old_filename = db_course.image.split("/")[-1]
+            delete_image(old_filename)
+    
     for key, value in data.items():
         if value is not None:
             setattr(db_course, key, value)
+    
+    if image_base64:
+        db_course.image_base64 = image_base64
+        image_url = save_image_from_base64(image_base64, overwrite=True)
+        if image_url:
+            db_course.image = image_url
     
     db.session.commit()
     db.session.refresh(db_course)
@@ -175,6 +228,11 @@ def delete_course(course_id):
     course = db.session.query(models.Course).filter(models.Course.id == course_id).first()
     if not course:
         return jsonify({"detail": "Course not found"}), 404
+    
+    if course.image:
+        filename = course.image.split("/")[-1]
+        delete_image(filename)
+    
     db.session.delete(course)
     db.session.commit()
     return jsonify({"message": "Course deleted"})
@@ -278,10 +336,26 @@ def create_career():
         return result
     
     data = request.get_json()
+    image_base64 = data.pop('image_base64', None)
+    
+    if image_base64:
+        valid, error_msg = validate_image_size(image_base64)
+        if not valid:
+            return jsonify({"detail": error_msg}), 400
+    
     db_career = models.Occupation(**data)
     db.session.add(db_career)
     db.session.commit()
     db.session.refresh(db_career)
+    
+    if image_base64:
+        db_career.image_base64 = image_base64
+        image_url = save_image_from_base64(image_base64, overwrite=True)
+        if image_url:
+            db_career.image = image_url
+        db.session.commit()
+        db.session.refresh(db_career)
+    
     return jsonify(occupation_to_dict(db_career)), 201
 
 
@@ -296,9 +370,26 @@ def update_career(career_id):
         return jsonify({"detail": "Career not found"}), 404
     
     data = request.get_json()
+    image_base64 = data.pop('image_base64', None)
+    
+    if image_base64:
+        valid, error_msg = validate_image_size(image_base64)
+        if not valid:
+            return jsonify({"detail": error_msg}), 400
+
+        if db_career.image:
+            old_filename = db_career.image.split("/")[-1]
+            delete_image(old_filename)
+    
     for key, value in data.items():
         if value is not None:
             setattr(db_career, key, value)
+    
+    if image_base64:
+        db_career.image_base64 = image_base64
+        image_url = save_image_from_base64(image_base64, overwrite=True)
+        if image_url:
+            db_career.image = image_url
     
     db.session.commit()
     db.session.refresh(db_career)
@@ -314,6 +405,11 @@ def delete_career(career_id):
     career = db.session.query(models.Occupation).filter(models.Occupation.id == career_id).first()
     if not career:
         return jsonify({"detail": "Career not found"}), 404
+    
+    if career.image:
+        filename = career.image.split("/")[-1]
+        delete_image(filename)
+    
     db.session.delete(career)
     db.session.commit()
     return jsonify({"message": "Career deleted"})
