@@ -1,5 +1,10 @@
+.results {
+  background: linear-gradient(135deg, #fff 0%, #cccce1 100%); 
+}
+
 .results-page {
   max-width: 1200px;
+  min-height: calc(100vh - 62px - 72px);
   margin: 0 auto;
   margin-top: 62px;
 }
@@ -26,6 +31,30 @@
 }
 
 .compare-bar {
-  background: #333;
+  background: #999;
   box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+}
+
+.step.clickable {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.step.clickable:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+.info-card {
+  background: linear-gradient(90deg, #f8f8f8, #f1f1f1);
+  border: 0;
+  color: var(--primary-color);
+  font-weight: 200;
+}
+
+.badge-custom-color {
+  background: #fff !important;
+  border: 1px solid #eee;
+  color: #666;
+  font-weight: 200;
 }

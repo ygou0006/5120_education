@@ -5,8 +5,8 @@
 }
 
 :root {
-  --primary-color: #336;
-  --secondary-color: #333;
+  --primary-color: #113a95;
+  --secondary-color: #002984;
   --light-gray: #ecf0f1;
   --dark-gray: #7f8c8d;
   --dark-green: #225;
@@ -15,7 +15,7 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  font-family: Poppins, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background: #f9fafb;
@@ -100,6 +100,57 @@ input, select, textarea {
 }
 
 /* Button style */
+.btn-gradient-sm {
+  background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  border: none;
+  color: #eee !important;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-gradient-sm:hover {
+  background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.btn-gradient-sm:active {
+  transform: translateY(0);
+}
+
+.btn-gradient-sm:disabled {
+  background: linear-gradient(135deg, #6c757d, #adb5bd);
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-gradient-sm:not(:disabled)::after {
+  content: '';
+  position: absolute;
+  top: 0%;
+  left: -30%;
+  width: 150%;
+  height: 80%;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.0) 0%,
+    rgba(255, 255, 255, 0.22) 50%,
+    rgba(255, 255, 255, 0.0) 100%
+  );
+  transform: rotate(60deg); /* 30deg */
+  transition: all 0.5s;
+  opacity: 0;
+}
+
+.btn-gradient-sm:not(:disabled):hover::after {
+  opacity: 1;
+  transform: rotate(30deg) translate(10%, 10%);
+}
+
+/* Button style */
 .btn-gradient-gray {
   background: linear-gradient(135deg, var(--dark-gray), var(--light-gray));
   border: none;
@@ -148,4 +199,46 @@ input, select, textarea {
 .btn-gradient-gray:not(:disabled):hover::after {
   opacity: 1;
   transform: rotate(30deg) translate(10%, 10%);
+}
+
+.btn-card {
+  color: #fff;
+  border-radius: 20px;
+  background-color: var(--primary-color);
+}
+
+.btn-card:hover {
+  color: #fff;
+  background-color: var(--secondary-color);
+}
+
+.career-card {
+  transition: transform 0.3s;
+  border: none;
+  border-radius: 20px !important;
+  overflow: hidden;
+}
+
+.career-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.card-title {
+  font-size: 1rem;
+  color: #00328d
+}
+
+.card-description {
+  font-size: 0.9rem;
+  color: #333;
+}
+
+.card-footer {
+  border: 0;
+  background-color: #fff;
+}
+
+.pagination {
+  border: unset !important;
 }

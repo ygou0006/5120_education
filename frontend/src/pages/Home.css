@@ -1,10 +1,14 @@
 .home {
-  margin-top: 62px;
-  min-height: 100vh;
+  /*margin-top: 62px;*/
+  min-height: calc(100vh - 62px - 72px);
+  background: linear-gradient(135deg, #fff 0%, #cccce1 100%);
 }
 
 .hero {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background-image: url('../assets/hero-gradient.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   color: white;
   padding: 8rem 0;
   text-align: center;
@@ -13,25 +17,33 @@
 .hero-title {
   font-size: 2.5rem;
   margin-bottom: 1rem;
+  color: var(--primary-color);
 }
 
 .hero-text {
-  font-size: 1.25rem;
+  font-size: 1.1rem;
   margin-bottom: 2rem;
   opacity: 0.9;
+  color: var(--primary-color);
 }
 
-.career-card {
-  transition: transform 0.3s;
+.hero-image {
+  max-width: 100%;
+  height: auto;
 }
 
-.career-card:hover {
-  transform: translateY(-4px);
+.btn-circle {
+  border-radius: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  font-size: 1.2rem;
 }
 
 .stat-card {
   background: white;
-  padding: 2rem;
+  padding: 1.6rem;
   border-radius: 12px;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
@@ -43,9 +55,9 @@
 }
 
 .step-number {
-  width: 50px;
-  height: 50px;
-  background: #667eea;
+  width: 40px;
+  height: 40px;
+  background: var(--primary-color);
   color: white;
   border-radius: 50%;
   display: inline-flex;
@@ -53,6 +65,7 @@
   justify-content: center;
   font-size: 1.5rem;
   font-weight: bold;
+  margin-top: 0.6rem;
   margin-bottom: 1rem;
 }
 
@@ -66,7 +79,8 @@
 
 .testimonial p {
   font-style: italic;
-  margin-bottom: 1rem;
+  font-size: 1.2rem;
+  margin-bottom: 0.2rem;
 }
 
 .testimonial span {

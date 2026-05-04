@@ -1,5 +1,10 @@
+.careers {
+  background: linear-gradient(135deg, #fff 0%, #cccce1 100%);
+}
+
 .careers-page {
   max-width: 1400px;
+  min-height: calc(100vh - 62px - 72px);
   margin: 0 auto;
   margin-top: 62px;
 }

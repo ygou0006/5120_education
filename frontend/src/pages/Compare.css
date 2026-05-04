@@ -1,10 +1,32 @@
 .compare-page {
   max-width: 1200px;
+  min-height: calc(100vh - 62px - 72px);
   margin: 0 auto;
+  margin-top: 62px;
 }
 
 .chart-container {
   background: white;
   padding: 1rem;
   border-radius: 8px;
+}
+
+.btn-compare-remove {
+  color: #600;
+  background-color: #ee3333cc;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  opacity: 0.8;
+}
+
+.btn-compare-remove:hover {
+  color: #600;
+  background-color: #ee3333ee;
+  opacity: 1.0;
+}
+
+.compare-modal .modal-content {
+  padding: 0 !important;
+  width: 100%;
 }

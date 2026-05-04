@@ -1,5 +1,6 @@
 .dashboard {
   max-width: 1200px;
+  min-height: calc(100vh - 62px - 72px);
   margin: 0 auto;
   margin-top: 62px;
 }

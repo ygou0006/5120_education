@@ -19,7 +19,7 @@ export interface Course {
   code: string;
   category?: string;
   description?: string;
-  image_base64?: string;
+  image?: string;
   icon_name?: string;
   color_code?: string;
   display_order: number;
@@ -41,7 +41,7 @@ export interface Occupation {
   anzsco_code: string;
   title: string;
   description?: string;
-  image_base64?: string;
+  image?: string;
   category?: string;
   sub_category?: string;
   skill_level?: number;
@@ -49,14 +49,17 @@ export interface Occupation {
   work_type?: string;
   work_hours?: string;
   main_tasks?: string;
+  pathway?: string;
+  alternative_pathways?: string;
   is_active: boolean;
 }
 
 export interface CareerMatch {
   occupation_id: number;
   title: string;
-  image_base64?: string;
+  image?: string;
   category?: string;
+  description?: string;
   match_score: number;
 }
 

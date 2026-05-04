@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button, Nav } from 'react-bootstrap';
 import { useAuth } from '../context/AuthContext';
 import { favoritesAPI, explorationsAPI } from '../api';
+import { AppConfig } from '../config';
 import type { Occupation, Exploration } from '../types';
 import './Dashboard.css';
 
@@ -59,6 +60,7 @@ const Dashboard = () => {
                     Profile
                   </Nav.Link>
                 </Nav.Item>
+                {AppConfig.enableFavorites && (
                 <Nav.Item>
                   <Nav.Link 
                     className={activeTab === 'favorites' ? 'active' : ''} 
@@ -68,6 +70,7 @@ const Dashboard = () => {
                     My Favorites
                   </Nav.Link>
                 </Nav.Item>
+                )}
                 <Nav.Item>
                   <Nav.Link 
                     className={activeTab === 'history' ? 'active' : ''} 
@@ -148,13 +151,13 @@ const Dashboard = () => {
                       </Form.Group>
                     </Col>
                   </Row>
-                  <Button className='btn btn-gradient' variant="primary" onClick={handleProfileUpdate}>Update Profile</Button>
+                  <Button className='btn btn-gradient-sm' variant="primary" onClick={handleProfileUpdate}>Update Profile</Button>
                 </Form>
               </Card.Body>
             </Card>
           )}
           
-          {activeTab === 'favorites' && (
+          {AppConfig.enableFavorites && activeTab === 'favorites' && (
             <Card>
               <Card.Header>
                 <h4 className="mb-0">My Favorites</h4>
@@ -171,7 +174,7 @@ const Dashboard = () => {
                             <Card.Title>{career.title}</Card.Title>
                             <Card.Text>{career.category}</Card.Text>
                             <div className="d-flex gap-2">
-                              <Link to={`/careers/${career.id}`} className="btn btn-gradient btn-sm">View</Link>
+                              <Link to={`/careers/${career.id}`} className="btn btn-gradient-sm btn-sm">View</Link>
                               <Button variant="outline-danger" size="sm" onClick={() => handleRemoveFavorite(career.id)}>Remove</Button>
                             </div>
                           </Card.Body>

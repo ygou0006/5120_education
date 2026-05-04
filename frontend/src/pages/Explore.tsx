@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Card, Form, Button, Badge, Pagination } from 'react-bootstrap';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Container, Row, Col, Form, Button, Badge, Pagination, Modal } from 'react-bootstrap';
 import { coursesAPI, interestsAPI, matchAPI, explorationsAPI } from '../api';
 import { useAuth } from '../context/AuthContext';
 import type { Course, InterestTag } from '../types';
@@ -8,12 +8,21 @@ import './Explore.css';
 
 const defaultCourseImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiM5Q0EzQUYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIyNCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZpbGw9IndoaXRlIj5Db3Vyc2U8L3RleHQ+PC9zdmc+';
 
+interface ExploreLocationState {
+  selectedCourses?: number[];
+  selectedInterests?: number[];
+  initialStep?: number;
+}
+
 const Explore = () => {
-  const [step, setStep] = useState(1);
+  const location = useLocation();
+  const initialState = location.state as ExploreLocationState | null;
+  
+  const [step, setStep] = useState(initialState?.initialStep ?? 1);
   const [courses, setCourses] = useState<Course[]>([]);
   const [interests, setInterests] = useState<InterestTag[]>([]);
-  const [selectedCourses, setSelectedCourses] = useState<number[]>([]);
-  const [selectedInterests, setSelectedInterests] = useState<number[]>([]);
+  const [selectedCourses, setSelectedCourses] = useState<number[]>(initialState?.selectedCourses ?? []);
+  const [selectedInterests, setSelectedInterests] = useState<number[]>(initialState?.selectedInterests ?? []);
   
   const [coursesPage, setCoursesPage] = useState(1);
   const [coursesTotalPages, setCoursesTotalPages] = useState(1);
@@ -23,9 +32,16 @@ const Explore = () => {
   const [interestsTotalPages, setInterestsTotalPages] = useState(1);
   const [interestsSearch, setInterestsSearch] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showCourseRequiredModal, setShowCourseRequiredModal] = useState(false);
   
   const { user } = useAuth();
   const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (initialState?.initialStep) {
+      setStep(initialState.initialStep);
+    }
+  }, [initialState?.initialStep]);
 
   const fetchCourses = useCallback((page: number, search: string) => {
     coursesAPI.getAll(page, 10, search || undefined)
@@ -162,7 +178,9 @@ const Explore = () => {
         state: { 
           careers: result.data,
           selectedCourses,
-          selectedInterests
+          selectedInterests,
+          selectedCoursesNames: courses.filter(c => selectedCourses.includes(c.id)).map(c => c.name),
+          selectedInterestsNames: interests.filter(i => selectedInterests.includes(i.id)).map(i => i.name)
         } 
       });
     } catch (err) {
@@ -179,121 +197,169 @@ const Explore = () => {
   };
 
   return (
-    <Container className="explore-page py-4">
-      <div className="steps-indicator mb-4">
-        <div className={`step ${step >= 1 ? 'active' : ''}`}>1. Courses</div>
-        <div className={`step ${step >= 2 ? 'active' : ''}`}>2. Interests</div>
-        <div className={`step ${step >= 3 ? 'active' : ''}`}>3. Results</div>
-      </div>
+    <div className='explore'>
+      <Container className="explore-page py-4">
+        <div className="steps-indicator mb-4">
+          <div
+            className={`step clickable ${step == 1 ? 'active' : ''}`}
+            onClick={() => setStep(1)}
+          >
+            1. About You
+          </div>
+          <div
+            className={`step clickable ${step == 2 ? 'active' : ''}`}
+            onClick={() => {
+              if (selectedCourses.length > 0 || step >= 2) {
+                setStep(2);
+              } else {
+                setShowCourseRequiredModal(true);
+                setTimeout(() => setShowCourseRequiredModal(false), 2000);
+              }
+            }}
+          >
+            2. Your Interests
+          </div>
+          <div
+            className={`step clickable ${step >= 3 ? 'active' : ''} ${step < 2 ? 'disabled' : ''}`}
+            onClick={() => {
+              if (step >= 2) {
+                handleFindCareers();
+              }
+            }}
+          >
+            3. Your Pathways
+          </div>
+        </div>
 
-      {step === 1 && (
-        <div className="selection-section">
-          <h2>Select Your Courses</h2>
-          <p className="text-muted mb-4">Choose the subjects you're taking or interested in</p>
-          
-          <Form onSubmit={handleCoursesSearch} className="mb-4 d-flex justify-content-center">
-            <Form.Control
-              type="text"
-              className='me-2'
-              placeholder="Search courses..."
-              value={coursesSearch}
-              onChange={(e) => setCoursesSearch(e.target.value)}
-            />
-            <Button type="submit" variant="primary" className='btn-gradient'>Search</Button>
-          </Form>
-          
-          <Row xs={1} sm={2} md={3} lg={4} className="g-3">
-            {courses?.map(course => (
-              <Col key={course.id}>
-                <Card 
-                  className={`selection-card h-100 ${selectedCourses.includes(course.id) ? 'selected border-primary' : ''}`}
+        {step === 1 && (
+          <div className="selection-section">
+            <h2>Start by Selecting What You Like</h2>
+            <p className="text-muted mb-4">Choose subjects, topics, or areas you are interested in to start exploring career pathways</p>
+
+            <Form onSubmit={handleCoursesSearch} className="mb-4 d-flex justify-content-center" style={{ padding: '6px'}}>
+              <Form.Control
+                type="text"
+                className='me-2'
+                placeholder="Search subjects or interests..."
+                value={coursesSearch}
+                onChange={(e) => setCoursesSearch(e.target.value)}
+              />
+              <Button type="submit" variant="primary" className='btn-gradient-sm'>Search</Button>
+            </Form>
+
+            <div className="explore-course-list">
+              {courses?.map(course => (
+                <div
+                  key={course.id}
+                  className={`explore-course-item ${selectedCourses.includes(course.id) ? 'selected' : ''}`}
                   onClick={() => toggleCourse(course.id)}
-                  style={{ cursor: 'pointer' }}
                 >
-                  <Card.Img variant="top" src={course.image_base64 || defaultCourseImage} alt={course.name} style={{ height: '120px', objectFit: 'cover' }} />
-                  <Card.Body className="text-center">
-                    <Card.Title>{course.name}</Card.Title>
-                    <Badge bg="secondary">{course.category}</Badge>
-                  </Card.Body>
-                </Card>
-              </Col>
-            ))}
-          </Row>
-          
-          {coursesTotalPages > 1 && (
-            <div className="mt-4">
-              {renderPagination(coursesPage, coursesTotalPages, setCoursesPage)}
+                  <div className="explore-course-checkbox">
+                    {selectedCourses.includes(course.id) && <span className="check-icon">✓</span>}
+                  </div>
+                  <div className="explore-course-image">
+                    <img src={course.image || defaultCourseImage} alt={course.name} />
+                  </div>
+                  <div className="explore-course-content">
+                    <h5 className="explore-course-title">{course.name}</h5>
+                    <Badge bg="secondary" className="explore-course-category">{course.category}</Badge>
+                    <p className="explore-course-description">{course.description || 'Explore this subject area to discover related career pathways'}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-          )}
-          
-          <div className="d-flex justify-content-center mt-4">
-            <Button
-              className='btn-gradient'
-              variant="primary" 
-              size="lg"
-              onClick={() => setStep(2)}
-              disabled={selectedCourses.length === 0 && selectedInterests.length === 0}
-            >
-              Next: Select Interests
-            </Button>
-            <Button className='btn-gradient-gray ms-3' variant="outline-danger" size="lg" onClick={reset}>Reset</Button>
-          </div>
-        </div>
-      )}
 
-      {step === 2 && (
-        <div className="selection-section">
-          <h2>Select Your Interests</h2>
-          <p className="text-muted mb-4">Pick activities that interest you</p>
-          
-          <Form onSubmit={handleInterestsSearch} className="d-flex justify-content-center mt-4 mb-4 m-3">
-            <Form.Control
-              type="text"
-              placeholder="Search interests..."
-              value={interestsSearch}
-              onChange={(e) => setInterestsSearch(e.target.value)}
-            />
-            <Button className='btn-gradient ms-2' type="submit" variant="primary">Search</Button>
-          </Form>
-          
-          <div className="tags-container">
-            {interests?.map(interest => (
+            {coursesTotalPages > 1 && (
+              <div className="mt-4">
+                {renderPagination(coursesPage, coursesTotalPages, setCoursesPage)}
+              </div>
+            )}
+
+            <div className="selection-summary mt-4 p-3 bg-light rounded">
+              <Row className="align-items-center">
+                <Col md={8}>
+                  <p className="mb-0">Selected: <strong>{selectedCourses.length}</strong> courses, <strong>{selectedInterests.length}</strong> interests</p>
+                </Col>
+                <Col md={4} className="text-md-end">
+                </Col>
+              </Row>
+            </div>
+
+            <div className="d-flex justify-content-center mt-4">
               <Button
-                key={interest.id}
-                variant={'outline-secondary'}
-                className={selectedInterests.includes(interest.id) ? 'btn-gradient interest-tag me-2 mb-2' : 'outline-secondary interest-tag me-2 mb-2'}
-                onClick={() => toggleInterest(interest.id)}
+                className='btn-gradient'
+                variant="primary"
+                size="lg"
+                onClick={() => setStep(2)}
+                disabled={selectedCourses.length === 0}
               >
-                {interest.emoji} {interest.name}
+                Continue to Interests
               </Button>
-            ))}
-          </div>
-          
-          {interestsTotalPages > 1 && (
-            <div className="mt-4">
-              {renderPagination(interestsPage, interestsTotalPages, setInterestsPage)}
+              <Button className='btn-gradient-gray ms-3' variant="outline-danger" size="lg" onClick={reset}>Reset</Button>
             </div>
-          )}
-          
-          <div className="d-flex justify-content-center mt-4">
-            <Button className='btn-gradient-gray' variant="outline-secondary" onClick={() => setStep(1)} disabled={loading}>Back</Button>
-            <Button className='btn-gradient ms-3' variant="primary" size="lg" onClick={handleFindCareers} disabled={loading}>
-              {loading ? 'Loading...' : 'Find Matching Careers'}
-            </Button>
           </div>
-        </div>
-      )}
+        )}
 
-      <div className="selection-summary mt-4 p-3 bg-light rounded">
-        <Row className="align-items-center">
-          <Col md={8}>
-            <p className="mb-0">Selected: <strong>{selectedCourses.length}</strong> courses, <strong>{selectedInterests.length}</strong> interests</p>
-          </Col>
-          <Col md={4} className="text-md-end">
-          </Col>
-        </Row>
-      </div>
-    </Container>
+        {step === 2 && (
+          <div className="selection-section">
+            <h2>Select Your Interests</h2>
+            <p className="text-muted mb-4">Pick activities that interest you</p>
+
+            <Form onSubmit={handleInterestsSearch} className="d-flex justify-content-center mt-4 mb-4">
+              <Form.Control
+                type="text"
+                placeholder="Search interests..."
+                value={interestsSearch}
+                onChange={(e) => setInterestsSearch(e.target.value)}
+              />
+              <Button className='btn-gradient-sm ms-2' type="submit" variant="primary">Search</Button>
+            </Form>
+
+            <div className="tags-container">
+              {interests?.map(interest => (
+                <Button
+                  key={interest.id}
+                  variant={'outline-secondary'}
+                  className={selectedInterests.includes(interest.id) ? 'btn-gradient interest-tag me-2 mb-2' : 'outline-secondary interest-tag me-2 mb-2'}
+                  onClick={() => toggleInterest(interest.id)}
+                >
+                  {interest.emoji} {interest.name}
+                </Button>
+              ))}
+            </div>
+
+            {interestsTotalPages > 1 && (
+              <div className="mt-4">
+                {renderPagination(interestsPage, interestsTotalPages, setInterestsPage)}
+              </div>
+            )}
+
+            <div className="selection-summary mt-4 p-3 bg-light rounded">
+              <Row className="align-items-center">
+                <Col md={8}>
+                  <p className="mb-0">Selected: <strong>{selectedCourses.length}</strong> courses, <strong>{selectedInterests.length}</strong> interests</p>
+                </Col>
+                <Col md={4} className="text-md-end">
+                </Col>
+              </Row>
+            </div>
+
+            <div className="d-flex justify-content-center mt-4">
+              <Button className='btn-gradient-gray' variant="outline-secondary" onClick={() => setStep(1)} disabled={loading}>Back</Button>
+              <Button className='btn-gradient ms-3' variant="primary" size="lg" onClick={handleFindCareers} disabled={loading}>
+                {loading ? 'Loading...' : 'Find Matching Careers'}
+              </Button>
+            </div>
+          </div>
+        )}
+
+        <Modal show={showCourseRequiredModal} onHide={() => setShowCourseRequiredModal(false)} centered>
+          <Modal.Body className="text-center py-4">
+            <p className="mb-0">Please select at least one course to continue</p>
+          </Modal.Body>
+        </Modal>
+      </Container>
+    </div>
   );
 };
 

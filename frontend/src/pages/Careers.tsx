@@ -74,62 +74,65 @@ const Careers = () => {
   };
 
   return (
-    <Container className="careers-page py-4" style={{ paddingTop: '80px' }}>
-      <h1 className="text-center mb-4">All Careers</h1>
+    <div className="careers">
+      <Container className="careers-page py-4" style={{ paddingTop: '80px' }}>
+        <h1 className="text-center mb-4">All Careers</h1>
 
-      <Form onSubmit={handleSearch} className="mb-4">
-        <Row className="justify-content-center">
-          <Col md={6}>
-            <div className="d-flex gap-2">
-              <Form.Control
-                type="text"
-                name="search"
-                placeholder="Search careers..."
-                defaultValue={search}
-              />
-              <Button className='btn btn-gradient' type="submit" variant="primary">Search</Button>
-            </div>
-          </Col>
-        </Row>
-      </Form>
-
-      {loading ? (
-        <div className="text-center py-5">
-          <p>Loading...</p>
-        </div>
-      ) : careers.length === 0 ? (
-        <div className="text-center py-5">
-          <p className="text-muted">No careers found.</p>
-        </div>
-      ) : (
-        <>
-          <Row xs={1} sm={2} md={3} lg={4} className="g-4">
-            {careers.map((career) => (
-              <Col key={career.id}>
-                <Link to={`/careers/${career.id}`} className="text-decoration-none">
-                  <Card className="h-100 d-flex flex-column career-card">
-                    <Card.Img variant="top" src={career.image_base64 || defaultImage} alt={career.title} style={{ height: '150px', objectFit: 'cover' }} />
-                    <Card.Body className="flex-grow-1">
-                      <Card.Title className="text-dark">{career.title}</Card.Title>
-                      <Card.Text className="text-muted">{career.category}</Card.Text>
-                    </Card.Body>
-                    <Card.Footer className="text-center">
-                      <span className="btn btn-gradient btn-sm">View Details</span>
-                    </Card.Footer>
-                  </Card>
-                </Link>
-              </Col>
-            ))}
+        <Form onSubmit={handleSearch} className="mb-4">
+          <Row className="justify-content-center">
+            <Col md={6}>
+              <div className="d-flex gap-2">
+                <Form.Control
+                  type="text"
+                  name="search"
+                  placeholder="Search careers..."
+                  defaultValue={search}
+                />
+                <Button className='btn btn-gradient-sm' type="submit" variant="primary">Search</Button>
+              </div>
+            </Col>
           </Row>
+        </Form>
 
-          {totalPages > 1 && (
-            <div className="mt-4">
-              {renderPagination()}
-            </div>
-          )}
-        </>
-      )}
-    </Container>
+        {loading ? (
+          <div className="text-center py-5">
+            <p>Loading...</p>
+          </div>
+        ) : careers.length === 0 ? (
+          <div className="text-center py-5">
+            <p className="text-muted">No careers found.</p>
+          </div>
+        ) : (
+          <>
+            <Row xs={1} sm={2} md={3} lg={4} className="g-4">
+              {careers.map((career) => (
+                <Col key={career.id}>
+                  <Link to={`/careers/${career.id}`} className="text-decoration-none">
+                    <Card className="h-100 d-flex flex-column career-card">
+                      <Card.Img variant="top" src={career.image || defaultImage} alt={career.title} style={{ height: '256px', objectFit: 'cover' }} />
+                      <Card.Body className="flex-grow-1">
+                        <Card.Title className="card-title">{career.title}</Card.Title>
+                        <Card.Text className="text-muted">{career.category}</Card.Text>
+                        <Card.Text className="card-description">{career.description!.length > 100 ? career.description!.substring(0, 100) + '...' : career.description}</Card.Text>
+                      </Card.Body>
+                      <Card.Footer className="text-center">
+                        <span className="btn btn-card btn-sm">View Details</span>
+                      </Card.Footer>
+                    </Card>
+                  </Link>
+                </Col>
+              ))}
+            </Row>
+
+            {totalPages > 1 && (
+              <div className="mt-4">
+                {renderPagination()}
+              </div>
+            )}
+          </>
+        )}
+      </Container>
+    </div>
   );
 };
 

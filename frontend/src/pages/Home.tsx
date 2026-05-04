@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import { careersAPI } from '../api';
 import type { Occupation } from '../types';
+import heroImage from '../assets/hero.png';
 import './Home.css';
 
 const defaultImage = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIiB2aWV3Qm94PSIwIDAgMjAwIDIwMCI+PHJlY3Qgd2lkdGg9IjIwMCIgaGVpZ2h0PSIyMDAiIGZpbGw9IiM5Q0EzQUYiLz48dGV4dCB4PSI1MCUiIHk9IjUwJSIgZm9udC1zaXplPSIyNCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iIGZpbGw9IndoaXRlIj5DYXJlZXI8L3RleHQ+PC9zdmc+';
@@ -21,10 +22,17 @@ const Home = () => {
       <section className="hero">
         <Container>
           <Row className="align-items-center">
-            <Col lg={8} className="mx-auto text-center">
-              <h1 className="hero-title">Discover Your Future Career</h1>
-              <p className="hero-text">Explore career paths that match your interests and chosen subjects. Made for Australian high school students.</p>
-              <Link to="/explore" className="btn btn-gradient btn-lg">Start Exploring</Link>
+            <Col lg={6} className="text-white">
+              <h1 className="hero-title">From Subjects to Careers<br />Discover Your Future Pathway</h1>
+              <p className="hero-text">
+                Explore how your interests, subjects, and strengths connect to real career opportunities.
+                Many young people struggle to understand how their learning connects to future careers - we make it simple and clear.
+                Designed for young people aged 12–17, whether you are in school or outside formal education.
+              </p>
+              <Link to="/explore" className="btn btn-gradient btn-lg">Start Exploring Your Future</Link>
+            </Col>
+            <Col lg={6} className="d-none d-lg-block text-center">
+              <img src={heroImage} alt="Hero" className="hero-image" />
             </Col>
           </Row>
         </Container>
@@ -38,23 +46,29 @@ const Home = () => {
               <Col key={career.id}>
                 <Link to={`/careers/${career.id}`} className="text-decoration-none">
                   <Card className="h-100 d-flex flex-column career-card">
-                    <Card.Img variant="top" src={career.image_base64 || defaultImage} alt={career.title} style={{ height: '150px', objectFit: 'cover' }} />
+                    <Card.Img variant="top" src={career.image || defaultImage} alt={career.title} style={{ height: '256px', objectFit: 'cover' }} />
                     <Card.Body className="flex-grow-1">
-                      <Card.Title className="text-dark">{career.title}</Card.Title>
+                      <Card.Title className="card-title">{career.title}</Card.Title>
                       <Card.Text className="text-muted">{career.category}</Card.Text>
+                      <Card.Text className="card-description">{career.description!.length > 100 ? career.description!.substring(0, 100) + '...' : career.description}</Card.Text>
                     </Card.Body>
                     <Card.Footer className="text-center">
-                      <span className="btn btn-gradient btn-sm">View Details</span>
+                      <span className="btn btn-card btn-sm">View Details</span>
                     </Card.Footer>
                   </Card>
                 </Link>
               </Col>
             ))}
           </Row>
+          <div className="text-center mt-4">
+            <Link to="/careers" className="btn btn-gradient-sm btn-lg btn-circle">
+              View More
+            </Link>
+          </div>
         </Container>
       </section>
 
-      <section className="stats-section py-5 bg-light">
+      <section className="stats-section py-5">
         <Container>
           <h2 className="text-center mb-4">Australian Employment Data</h2>
           <Row xs={1} md={3} className="g-4 text-center">
@@ -85,64 +99,45 @@ const Home = () => {
           <h2 className="text-center mb-4">How It Works</h2>
           <Row xs={1} md={3} className="g-4">
             <Col>
-              <div className="step text-center">
+              <div className="step text-center" style={{ background: '#fff' }}>
                 <div className="step-number">1</div>
-                <h3>Choose Your Subjects</h3>
-                <p>Select the high school courses you're taking or interested in</p>
+                <h3>Tell Us About You</h3>
+                <p>Select your subjects, interests, or areas you enjoy</p>
               </div>
             </Col>
             <Col>
-              <div className="step text-center">
+              <div className="step text-center" style={{ background: '#fff' }}>
                 <div className="step-number">2</div>
-                <h3>Add Your Interests</h3>
-                <p>Pick activities and subjects that interest you</p>
+                <h3>Build Your Profile</h3>
+                <p>We combine your inputs to understand your strengths and preferences</p>
               </div>
             </Col>
             <Col>
-              <div className="step text-center">
+              <div className="step text-center" style={{ background: '#fff' }}>
                 <div className="step-number">3</div>
-                <h3>Discover Careers</h3>
-                <p>Get matched with careers that fit your profile</p>
+                <h3>Discover Career Pathways</h3>
+                <p>Explore careers and pathways that match your profile</p>
               </div>
             </Col>
           </Row>
         </Container>
       </section>
 
-      <section className="testimonials py-5 bg-light">
+      <section className="testimonials py-5">
         <Container>
-          <h2 className="text-center mb-4">What Students Say</h2>
-          <Row xs={1} md={2} className="g-4">
+          <h2 className="text-center mb-4">Why Use Prospect</h2>
+          <Row xs={1} md={1} className="g-4">
             <Col>
               <div className="testimonial">
-                <p>"Prospect helped me understand what I could do with my science and math subjects."</p>
-                <span>- Year 11 Student, Sydney</span>
-              </div>
-            </Col>
-            <Col>
-              <div className="testimonial">
-                <p>"The career matching was surprisingly accurate. I found my dream job!"</p>
-                <span>- Year 12 Student, Melbourne</span>
+                <p>• Understand how your learning connects to future careers</p>
+                <p>• Explore options in a simple and visual way</p>
+                <p>• Get personalised career insights </p>
               </div>
             </Col>
           </Row>
         </Container>
       </section>
 
-      <footer className="footer py-4">
-        <Container>
-          <Row className="align-items-center">
-            <Col md={6} className="text-center text-md-start mb-3 mb-md-0">
-              <p className="mb-0">&copy; 2026 Prospect. Career exploration for Australian students.</p>
-            </Col>
-            <Col md={6} className="text-center text-md-end">
-              <Link to="/about" className="me-3">About</Link>
-              <a href="#" className="me-3">Privacy Policy</a>
-              <a href="#">Contact</a>
-            </Col>
-          </Row>
-        </Container>
-      </footer>
     </div>
   );
 };

@@ -1,6 +1,7 @@
 .navbar {
-  background-color: #333;
+  background-color: #002984;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: all 1.0s;
 }
 
 .navbar-brand {
@@ -10,16 +11,33 @@
 }
 
 .navbar .nav-link {
-  color: white !important;
+  color: white;
   margin: 0 0.25rem;
 }
 
 .navbar .nav-link:hover {
-  color: #9CA3AF !important;
+  color: #eee !important;
 }
 
 @media (max-width: 991px) {
   .navbar .nav-link {
     padding: 0.5rem 0;
   }
+}
+
+@media (min-width: 991px) {
+  .navbar-transparent {
+    background: transparent !important;
+    box-shadow: none;
+    transition: all 1.0s;
+  }
+
+  .navbar-transparent .navbar-brand,
+  .navbar-transparent .nav-link {
+    color: #002984 !important;
+  }
+
+  .navbar-transparent .nav-link:hover {
+    color: #fff !important;
+  }  
 }

@@ -17,6 +17,7 @@ interface CourseFormData {
   icon_name?: string;
   color_code?: string;
   image_base64?: string;
+  image?: string;
 }
 
 interface InterestFormData {
@@ -36,7 +37,10 @@ interface CareerFormData {
   work_type: string;
   work_hours?: string;
   main_tasks?: string;
+  pathway?: string;
+  alternative_pathways?: string;
   image_base64?: string;
+  image?: string;
 }
 
 interface UserFormData {
@@ -155,9 +159,7 @@ const Admin = () => {
   const loadCareers = async (page: number = 1, search: string = '') => {
     try {
       const res = await adminAPI.getCareers({ page, per_page: 10, search }) as any;
-      console.log('careers response:', res);
       const data = res.data?.data || [];
-      console.log('careers data:', data);
       setCareers(data);
       setCareerPage(res.data?.page || 1);
       setCareerTotalPages(res.data?.total_pages || 1);
@@ -181,9 +183,9 @@ const Admin = () => {
   }, []);
 
   const resetForms = () => {
-    setCourseForm({ name: '', code: '', category: '', description: '' });
+    setCourseForm({ name: '', code: '', category: '', description: '', icon_name: '', color_code: '', image: '', image_base64: '' });
     setInterestForm({ name: '', category: '', emoji: '' });
-    setCareerForm({ anzsco_code: '', title: '', description: '', category: '', sub_category: '', skill_level: 1, education_required: '', work_type: '' });
+    setCareerForm({ anzsco_code: '', title: '', description: '', category: '', sub_category: '', skill_level: 1, education_required: '', work_type: '', work_hours: '', main_tasks: '', pathway: '', alternative_pathways: '', image: '', image_base64: '' });
     setUserForm({ full_name: '' });
     setCurrentItem(null);
     setImagePreview(null);
@@ -215,18 +217,18 @@ const Admin = () => {
   const openEditModal = (type: 'course' | 'interest' | 'career' | 'user', item: any) => {
     setModalType('edit');
     setCurrentItem(item);
-    if (type === 'course') {
-      setCourseForm({
-        name: item.name,
-        code: item.code,
-        category: item.category || '',
-        description: item.description || '',
-        icon_name: item.icon_name || '',
-        color_code: item.color_code || '',
-        image_base64: item.image_base64 || ''
-      });
-      setImagePreview(item.image_base64 || null);
-      setModalType('course' as any);
+      if (type === 'course') {
+        setCourseForm({
+          name: item.name,
+          code: item.code,
+          category: item.category || '',
+          description: item.description || '',
+          icon_name: item.icon_name || '',
+          color_code: item.color_code || '',
+          image_base64: item.image_base64 || undefined
+        });
+        setImagePreview(item.image_base64 || null);
+        setModalType('course' as any);
     } else if (type === 'interest') {
       setInterestForm({
         name: item.name,
@@ -234,22 +236,24 @@ const Admin = () => {
         emoji: item.emoji || ''
       });
       setModalType('interest' as any);
-    } else if (type === 'career') {
-      setCareerForm({
-        anzsco_code: item.anzsco_code,
-        title: item.title,
-        description: item.description || '',
-        category: item.category || '',
-        sub_category: item.sub_category || '',
-        skill_level: item.skill_level || 1,
-        education_required: item.education_required || '',
-        work_type: item.work_type || '',
-        work_hours: item.work_hours || '',
-        main_tasks: item.main_tasks || '',
-        image_base64: item.image_base64 || ''
-      });
-      setImagePreview(item.image_base64 || null);
-      setModalType('career' as any);
+      } else if (type === 'career') {
+        setCareerForm({
+          anzsco_code: item.anzsco_code,
+          title: item.title,
+          description: item.description || '',
+          category: item.category || '',
+          sub_category: item.sub_category || '',
+          skill_level: item.skill_level || 1,
+          education_required: item.education_required || '',
+          work_type: item.work_type || '',
+          work_hours: item.work_hours || '',
+          main_tasks: item.main_tasks || '',
+          pathway: item.pathway || '',
+          alternative_pathways: item.alternative_pathways || '',
+          image_base64: item.image_base64 || undefined
+        });
+        setImagePreview(item.image_base64 || null);
+        setModalType('career' as any);
     } else if (type === 'user') {
       setUserForm({
         full_name: item.full_name || '',
@@ -503,10 +507,14 @@ const Admin = () => {
       const isEdit = currentItem !== null;
       
       if (currentModal === 'course') {
+        const submitData = { ...courseForm };
+        if (isEdit && !submitData.image_base64) {
+          delete submitData.image_base64;
+        }
         if (isEdit) {
-          await adminAPI.updateCourse(currentItem.id, courseForm);
+          await adminAPI.updateCourse(currentItem.id, submitData);
         } else {
-          await adminAPI.createCourse(courseForm);
+          await adminAPI.createCourse(submitData);
         }
       } else if (currentModal === 'interest') {
         if (isEdit) {
@@ -515,10 +523,14 @@ const Admin = () => {
           await adminAPI.createInterest(interestForm);
         }
       } else if (currentModal === 'career') {
+        const submitData = { ...careerForm };
+        if (isEdit && !submitData.image_base64) {
+          delete submitData.image_base64;
+        }
         if (isEdit) {
-          await adminAPI.updateCareer(currentItem.id, careerForm);
+          await adminAPI.updateCareer(currentItem.id, submitData);
         } else {
-          await adminAPI.createCareer(careerForm);
+          await adminAPI.createCareer(submitData);
         }
       } else if (currentModal === 'user') {
         if (isEdit) {
@@ -540,7 +552,7 @@ const Admin = () => {
   const linkedCourseIds = careerCourses.map(cc => cc.course_id);
 
   if (!user || user.role !== 'admin') {
-    return <div>Admin access required</div>;
+    return (<div className="admin-page"><div style={{ textAlign: 'center' }}>Admin access required</div></div>);
   }
 
   return (
@@ -574,7 +586,7 @@ const Admin = () => {
         <div className="admin-section">
           <div className="section-header">
             <h2>Course Management</h2>
-            <button className="btn btn-gradient" onClick={() => openAddModal('course')}>+ Add Course</button>
+            <button className="btn btn-gradient-sm" onClick={() => openAddModal('course')}>+ Add Course</button>
           </div>
           <table>
             <thead>
@@ -591,7 +603,7 @@ const Admin = () => {
               {courses.map(course => (
                 <tr key={course.id}>
                   <td>{course.id}</td>
-                  <td>{course.image_base64 ? <img src={course.image_base64} alt="" style={{width: 40, height: 40, objectFit: 'cover'}} /> : '-'}</td>
+                  <td>{course.image ? <img src={course.image} alt="" style={{width: 40, height: 40, objectFit: 'cover'}} /> : '-'}</td>
                   <td>{course.name}</td>
                   <td>{course.code}</td>
                   <td>{course.category}</td>
@@ -610,7 +622,7 @@ const Admin = () => {
         <div className="admin-section">
           <div className="section-header">
             <h2>Interest Tag Management</h2>
-            <button className="btn btn-gradient" onClick={() => openAddModal('interest')}>+ Add Interest</button>
+            <button className="btn btn-gradient-sm" onClick={() => openAddModal('interest')}>+ Add Interest</button>
           </div>
           <table>
             <thead>
@@ -644,7 +656,7 @@ const Admin = () => {
         <div className="admin-section">
           <div className="section-header">
             <h2>Career Management</h2>
-            <button className="btn btn-gradient" onClick={() => openAddModal('career')}>+ Add Career</button>
+            <button className="btn btn-gradient-sm" onClick={() => openAddModal('career')}>+ Add Career</button>
           </div>
           <div className="search-bar">
             <input 
@@ -654,7 +666,7 @@ const Admin = () => {
               onChange={(e) => setCareerSearch(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && loadCareers(1, careerSearch)}
             />
-            <button className='btn btn-gradient' onClick={() => loadCareers(1, careerSearch)}>Search</button>
+            <button className='btn btn-gradient-sm' onClick={() => loadCareers(1, careerSearch)}>Search</button>
           </div>
           <table>
             <thead>
@@ -671,7 +683,7 @@ const Admin = () => {
               {(careers || []).map(career => (
                 <tr key={career.id}>
                   <td>{career.id}</td>
-                  <td>{career.image_base64 ? <img src={career.image_base64} alt="" style={{width: 40, height: 40, objectFit: 'cover'}} /> : '-'}</td>
+                  <td>{career.image ? <img src={career.image} alt="" style={{width: 40, height: 40, objectFit: 'cover'}} /> : '-'}</td>
                   <td>{career.title}</td>
                   <td>{career.anzsco_code}</td>
                   <td>{career.category}</td>
@@ -689,7 +701,7 @@ const Admin = () => {
           {careerTotalPages > 1 && (
             <div className="pagination">
               <button
-                className='btn btn-gradient btn-sm'
+                className='btn btn-gradient-sm btn-sm'
                 disabled={careerPage === 1} 
                 onClick={() => loadCareers(careerPage - 1, careerSearch)}
               >
@@ -697,7 +709,7 @@ const Admin = () => {
               </button>
               <span>Page {careerPage} of {careerTotalPages}</span>
               <button
-                className='btn btn-gradient btn-sm'
+                className='btn btn-gradient-sm btn-sm'
                 disabled={careerPage === careerTotalPages} 
                 onClick={() => loadCareers(careerPage + 1, careerSearch)}
               >
@@ -736,7 +748,9 @@ const Admin = () => {
                   <td>{u.is_active ? 'Yes' : 'No'}</td>
                   <td>
                     <button onClick={() => openEditModal('user', u)}>Edit</button>
-                    <button className="delete-btn" onClick={() => handleDelete('user', u.id)}>Delete</button>
+                    {u.username !== 'admin' && (
+                      <button className="delete-btn" onClick={() => handleDelete('user', u.id)}>Delete</button>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -747,7 +761,7 @@ const Admin = () => {
 
       {showModal && (
         <div className="modal-overlay" onClick={() => setShowModal(false)}>
-          <div className="modal-content" onClick={e => e.stopPropagation()}>
+          <div className="modal-content modal-large" onClick={e => e.stopPropagation()}>
             <h2>
               {modalType === 'add' ? 'Add' : 'Edit'} {' '}
               {modalType === 'course' ? 'Course' : modalType === 'interest' ? 'Interest' : modalType === 'career' ? 'Career' : 'User'}
@@ -869,6 +883,14 @@ const Admin = () => {
                     <textarea value={careerForm.main_tasks} onChange={e => setCareerForm({...careerForm, main_tasks: e.target.value})} />
                   </div>
                   <div className="form-group">
+                    <label>Pathway</label>
+                    <textarea value={careerForm.pathway} onChange={e => setCareerForm({...careerForm, pathway: e.target.value})} />
+                  </div>
+                  <div className="form-group">
+                    <label>Alternative Pathways</label>
+                    <textarea value={careerForm.alternative_pathways} onChange={e => setCareerForm({...careerForm, alternative_pathways: e.target.value})} />
+                  </div>
+                  <div className="form-group">
                     <label>Image</label>
                     <input type="file" accept="image/*" onChange={e => handleImageUpload(e, setCareerForm)} ref={fileInputRef} />
                     {imagePreview && <img src={imagePreview} alt="Preview" style={{marginTop: 10, maxWidth: '100%', maxHeight: 150}} />}
@@ -900,7 +922,7 @@ const Admin = () => {
                 </>
               )}
               <div className="form-actions">
-                <button className='btn btn-gradient' type="submit" disabled={loading}>{loading ? 'Saving...' : 'Save'}</button>
+                <button className='btn btn-gradient-sm' type="submit" disabled={loading}>{loading ? 'Saving...' : 'Save'}</button>
                 <button type="button" onClick={() => setShowModal(false)}>Cancel</button>
               </div>
             </form>

@@ -1,6 +1,7 @@
 .admin-page {
   width: 100%;
   max-width: 1200px;
+  min-height: calc(100vh - 62px - 72px);
   margin: 0 auto;
   margin-top: 62px;
   padding: 1rem;
@@ -69,9 +70,9 @@
 }
 
 .stat-card p {
-  font-size: 2rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  color: #667eea;
+  color: var(--secondary-color);
 }
 
 table {
@@ -93,22 +94,31 @@ th {
 }
 
 table button {
-  margin-top: 0.2rem;
+  margin-top: 0.5rem;
   margin-right: 0.5rem;
-  padding: 0.25rem 0.75rem;
-  background: #666;
-  color: white;
-  border: none;
-  border-radius: 4px;
+  padding: 0.06rem 0.75rem;
+  background: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 20px;
   cursor: pointer;
 }
 
 table button.delete-btn {
-  background: #c33;
+  color: #c33;
+  border: 1px solid #ebbb;
+}
+
+table button.delete-btn:hover {
+  background: #c66;
+  color: #fff;
+  transition: all 0.5s;
 }
 
 table button:hover {
-  opacity: 0.8;
+  background: #666;
+  color: #fff;
+  transition: all 0.5s;
 }
 
 .section-header {
@@ -141,8 +151,9 @@ table button:hover {
   border-radius: 12px;
   width: 90%;
   max-width: 500px;
-  max-height: 90vh;
+  max-height: 88vh;
   overflow-y: auto;
+  margin-top: 62px;
 }
 
 .modal-content h2 {
@@ -375,5 +386,14 @@ table button:hover {
 @media (max-width: 768px) {
   table {
     display: block;
+  }
+
+  .admin-tabs button {
+    padding: 0.1rem 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .admin-page .btn-gradient {
+    font-size: 0.8rem;
   }
 }
