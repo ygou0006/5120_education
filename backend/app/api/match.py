@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+import math
 from sqlalchemy import case, func
 from app import db
 from app.models import models
@@ -36,9 +37,12 @@ def match_careers():
         subquery_courses = db.session.query(
             models.OccupationCourse.occupation_id,
             func.sum(
-                models.OccupationCourse.weight_score * 
-                (models.OccupationCourse.importance_level / 3.0) *
-                case((models.OccupationCourse.is_required == True, 1.5), else_=1.0)
+                func.least(
+                    models.OccupationCourse.weight_score * 
+                    (models.OccupationCourse.importance_level / 3.0) *
+                    case((models.OccupationCourse.is_required == True, 1.5), else_=1.0),
+                    1.0
+                )
             ).label('course_score')
         ).filter(
             models.OccupationCourse.course_id.in_(course_ids)
@@ -90,12 +94,16 @@ def match_careers():
             if len(row) > idx:
                 interest_score = float(row[idx]) if row[idx] else 0
         
-        total_score = (course_score * COURSE_WEIGHT) + (interest_score * INTEREST_WEIGHT)
-        
-        if total_count > 0:
-            final_score = total_score / total_count
-        else:
-            final_score = 0
+        # total_score = (course_score * COURSE_WEIGHT) + (interest_score * INTEREST_WEIGHT)
+
+        # if total_count > 0:
+        #     final_score = total_score / total_count
+        # else:
+        #     final_score = 0
+
+        course_norm = 1 - math.exp(-course_score / 2.0) if course_ids else 0
+        interest_norm = 1 - math.exp(-interest_score / 2.0) if interest_ids else 0
+        final_score = (course_norm * COURSE_WEIGHT) + (interest_norm * INTEREST_WEIGHT)
         
         if final_score > 0:
             results.append({
@@ -104,7 +112,7 @@ def match_careers():
                 "image": image,
                 "category": category,
                 "description": description,
-                "match_score": round(final_score, 2)
+                "match_score": round(final_score * 100, 2)
             })
     
     results.sort(key=lambda x: x["match_score"], reverse=True)
