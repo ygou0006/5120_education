@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy import func
 from app import db
 from app.models import models
+from app.schemas.schemas import EmploymentProjectionResponse
 
 bp = Blueprint('careers', __name__)
 
@@ -77,6 +78,7 @@ def outlook_to_dict(data):
         "projected_employment": data.projected_employment,
         "automation_risk_score": data.automation_risk_score,
         "emerging_industry": data.emerging_industry,
+        "vce_requirements": data.vce_requirements,
         "skills_in_demand": data.skills_in_demand
     }
 
@@ -129,6 +131,31 @@ def get_future_outlook(occupation_id):
     if not outlook:
         return jsonify(None)
     return jsonify(outlook_to_dict(outlook))
+
+
+@bp.route("/<int:occupation_id>/courses", methods=["GET"])
+def get_career_courses(occupation_id):
+    links = db.session.query(models.OccupationCourse).filter(
+        models.OccupationCourse.occupation_id == occupation_id
+    ).all()
+    return jsonify([{
+        "course_id": l.course_id,
+        "course_name": l.course.name,
+        "course_code": l.course.code,
+        "is_required": l.is_required,
+        "weight_score": l.weight_score,
+        "importance_level": l.importance_level,
+    } for l in links])
+
+
+@bp.route("/<int:occupation_id>/projections", methods=["GET"])
+def get_employment_projections(occupation_id):
+    projection = db.session.query(models.EmploymentProjection).filter(
+        models.EmploymentProjection.occupation_id == occupation_id
+    ).first()
+    if not projection:
+        return jsonify(None)
+    return jsonify(EmploymentProjectionResponse.model_validate(projection).model_dump())
 
 
 @bp.route("/search/list", methods=["GET"])
