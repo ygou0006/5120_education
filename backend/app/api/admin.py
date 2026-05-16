@@ -423,6 +423,7 @@ def future_outlook_to_dict(outlook):
         "projected_employment": outlook.projected_employment,
         "automation_risk_score": outlook.automation_risk_score,
         "emerging_industry": outlook.emerging_industry,
+        "vce_requirements": outlook.vce_requirements,
         "skills_in_demand": outlook.skills_in_demand
     }
 
@@ -470,6 +471,7 @@ def create_career_future_outlook(career_id):
         projected_employment=data.get("projected_employment"),
         automation_risk_score=data.get("automation_risk_score"),
         emerging_industry=data.get("emerging_industry", False),
+        vce_requirements=data.get("vce_requirements"),
         skills_in_demand=data.get("skills_in_demand")
     )
     db.session.add(outlook)
@@ -487,14 +489,14 @@ def update_career_future_outlook(career_id):
     career = db.session.query(models.Occupation).filter(models.Occupation.id == career_id).first()
     if not career:
         return jsonify({"detail": "Career not found"}), 404
-    
+
     outlook = db.session.query(models.FutureOutlook).filter(
         models.FutureOutlook.occupation_id == career_id
     ).first()
     
     if not outlook:
         return jsonify({"detail": "Future outlook not found. Use POST to create."}), 404
-    
+
     data = request.get_json()
     if data.get("projected_growth_rate") is not None:
         outlook.projected_growth_rate = data.get("projected_growth_rate")
@@ -504,9 +506,11 @@ def update_career_future_outlook(career_id):
         outlook.automation_risk_score = data.get("automation_risk_score")
     if data.get("emerging_industry") is not None:
         outlook.emerging_industry = data.get("emerging_industry")
+    if data.get("vce_requirements") is not None:
+        outlook.vce_requirements = data.get("vce_requirements")
     if data.get("skills_in_demand") is not None:
         outlook.skills_in_demand = data.get("skills_in_demand")
-    
+
     db.session.commit()
     db.session.refresh(outlook)
     return jsonify(future_outlook_to_dict(outlook))
