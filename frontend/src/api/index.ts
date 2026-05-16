@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { User, Course, InterestTag, Occupation, CareerMatch, EmploymentData, SalaryTrend, RegionalEmployment, FutureOutcome, LoginRequest, RegisterRequest, Token, Exploration, PaginatedResponse } from '../types';
+import type { User, Course, InterestTag, Occupation, CareerMatch, EmploymentData, SalaryTrend, RegionalEmployment, FutureOutcome, EmploymentProjection, LoginRequest, RegisterRequest, Token, Exploration, PaginatedResponse } from '../types';
 
 const API_URL = '/api';
 
@@ -68,6 +68,8 @@ export const careersAPI = {
   getSalary: (id: number) => api.get<SalaryTrend[]>(`/careers/${id}/salary`),
   getRegional: (id: number) => api.get<RegionalEmployment[]>(`/careers/${id}/regional`),
   getFutureOutcome: (id: number) => api.get<FutureOutcome>(`/careers/${id}/outlook`),
+  getCourses: (id: number) => api.get<{ course_id: number; course_name: string; course_code: string; is_required: boolean; weight_score: number; importance_level: number }[]>(`/careers/${id}/courses`),
+  getProjections: (id: number) => api.get<EmploymentProjection>(`/careers/${id}/projections`),
   search: (q: string, skip: number = 0, limit: number = 20, fields?: string) => {
     let url = `/careers/search/list?q=${encodeURIComponent(q)}&skip=${skip}&limit=${limit}`;
     if (fields) url += `&fields=${fields}`;
