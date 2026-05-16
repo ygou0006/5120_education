@@ -98,6 +98,7 @@ class Occupation(db.Model):
     salary_trends = relationship("SalaryTrend", back_populates="occupation")
     regional_employment = relationship("RegionalEmployment", back_populates="occupation")
     future_outlook = relationship("FutureOutlook", back_populates="occupation", uselist=False)
+    employment_projection = relationship("EmploymentProjection", back_populates="occupation", uselist=False)
 
 
 class OccupationCourse(db.Model):
@@ -187,11 +188,30 @@ class FutureOutlook(db.Model):
     projected_employment = Column(Integer)
     automation_risk_score = Column(Float)
     emerging_industry = Column(Boolean, default=False)
+    vce_requirements = Column(JSON)
     skills_in_demand = Column(JSON)
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
 
     occupation = relationship("Occupation", back_populates="future_outlook")
+
+
+class EmploymentProjection(db.Model):
+    __tablename__ = "employment_projections"
+
+    id = Column(Integer, primary_key=True, index=True)
+    occupation_id = Column(Integer, ForeignKey("occupations.id", ondelete="CASCADE"), nullable=False)
+    year_2025_employment = Column(Float)
+    year_2030_employment = Column(Float)
+    year_2035_employment = Column(Float)
+    change_5yr_level = Column(Float)
+    change_5yr_pct = Column(Float)
+    change_10yr_level = Column(Float)
+    change_10yr_pct = Column(Float)
+    created_at = Column(DateTime, server_default=func.now())
+    updated_at = Column(DateTime, server_default=func.now(), onupdate=func.now())
+
+    occupation = relationship("Occupation", back_populates="employment_projection")
 
 
 class UserExploration(db.Model):

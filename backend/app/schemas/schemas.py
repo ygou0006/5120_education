@@ -242,6 +242,7 @@ class FutureOutlookBase(BaseModel):
     projected_employment: Optional[int] = None
     automation_risk_score: Optional[float] = None
     emerging_industry: Optional[bool] = False
+    vce_requirements: Optional[List[str]] = None
     skills_in_demand: Optional[List[str]] = None
 
 
@@ -267,6 +268,19 @@ class CareerMatchResponse(BaseModel):
     image: Optional[str] = None
     category: Optional[str] = None
     match_score: float
+
+
+class EmploymentProjectionResponse(BaseModel):
+    year_2025_employment: Optional[float] = None
+    year_2030_employment: Optional[float] = None
+    year_2035_employment: Optional[float] = None
+    change_5yr_level: Optional[float] = None
+    change_5yr_pct: Optional[float] = None
+    change_10yr_level: Optional[float] = None
+    change_10yr_pct: Optional[float] = None
+
+    class Config:
+        from_attributes = True
 
 
 class ExplorationSaveRequest(BaseModel):
