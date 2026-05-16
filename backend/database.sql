@@ -261,6 +261,7 @@ CREATE TABLE IF NOT EXISTS future_outlook (
     projected_employment INT COMMENT 'Projected employment (5 years)',
     automation_risk_score DECIMAL(5,2) COMMENT 'Automation risk score 0-100',
     emerging_industry BOOLEAN DEFAULT FALSE COMMENT 'Is emerging industry',
+    vce_requirements JSON COMMENT 'VCE Requirements (JSON array)',
     skills_in_demand JSON COMMENT 'In-demand skills (JSON array)',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -285,6 +286,26 @@ CREATE TABLE IF NOT EXISTS user_activity_logs (
     INDEX idx_action_type (action_type),
     INDEX idx_created_at (created_at)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='User activity logs table';
+
+-- =====================================================
+-- 16. Employment projections table
+-- =====================================================
+CREATE TABLE IF NOT EXISTS employment_projections (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    occupation_id INT NOT NULL COMMENT 'Occupation ID (references occupations table)',
+    year_2025_employment DECIMAL(12,2) COMMENT 'Employment baseline May 2025 (thousands)',
+    year_2030_employment DECIMAL(12,2) COMMENT 'Projected employment May 2030 (thousands)',
+    year_2035_employment DECIMAL(12,2) COMMENT 'Projected employment May 2035 (thousands)',
+    change_5yr_level DECIMAL(12,2) COMMENT '5-year employment change (thousands)',
+    change_5yr_pct DECIMAL(10,4) COMMENT '5-year employment change (%)',
+    change_10yr_level DECIMAL(12,2) COMMENT '10-year employment change (thousands)',
+    change_10yr_pct DECIMAL(10,4) COMMENT '10-year employment change (%)',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (occupation_id) REFERENCES occupations(id) ON DELETE CASCADE,
+    UNIQUE KEY unique_occupation (occupation_id),
+    INDEX idx_occupation_id (occupation_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='Employment projections for 4-digit ANZSCO occupations (2025-2035)';
 
 -- Insert sample data
 INSERT INTO courses (name, code, category, description, icon_name, color_code, display_order) VALUES
