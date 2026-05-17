@@ -5,6 +5,15 @@
   margin-top: 62px;
 }
 
+.compare-page .card .badge {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
 .chart-container {
   background: white;
   padding: 1rem;
@@ -29,4 +38,51 @@
 .compare-modal .modal-content {
   padding: 0 !important;
   width: 100%;
+}
+
+#compare-overview, #compare-employment, #compare-salary, #compare-regional, #compare-table {
+  scroll-margin-top: var(--scroll-offset, 130px);
+}
+
+@media (max-width: 768px) {
+  #compare-overview, #compare-employment, #compare-salary, #compare-regional, #compare-table {
+    scroll-margin-top: var(--scroll-offset, 170px);
+  }  
+}
+
+.anchor-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 16px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 2px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  position: sticky;
+  top: 62px;
+  z-index: 100;
+}
+
+.anchor-nav-item {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: #555;
+  text-decoration: none;
+  background: #f5f5f5;
+  transition: all 0.2s;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.anchor-nav-item:hover {
+  background: #667eea;
+  color: white;
+}
+
+.anchor-nav-item.active {
+  background: #667eea;
+  color: white;
 }
