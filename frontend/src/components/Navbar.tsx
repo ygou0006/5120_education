@@ -40,7 +40,7 @@ const Navbar = () => {
   return (
     <BsNavbar expand="lg" className={navbarClass} fixed="top" collapseOnSelect>
       <Container>
-        <BsNavbar.Brand as={Link} to="/" className="navbar-brand">🌱 Prospect</BsNavbar.Brand>
+        <BsNavbar.Brand as={Link} to="/" className="navbar-brand"><img src="/logo.png" alt="CareerWeave" height="36" className="d-inline-block align-top" style={{ marginTop: '-5px', marginRight: '8px' }} />CareerWeave</BsNavbar.Brand>
         <BsNavbar.Toggle aria-controls="basic-navbar-nav" onClick={() => setExpanded(!expanded)} />
         <BsNavbar.Collapse id="basic-navbar-nav">
           <Nav className="ms-auto">
