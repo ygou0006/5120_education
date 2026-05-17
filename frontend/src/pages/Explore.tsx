@@ -204,7 +204,7 @@ const Explore = () => {
             className={`step clickable ${step == 1 ? 'active' : ''}`}
             onClick={() => setStep(1)}
           >
-            1. About You
+            1. Your Subjects
           </div>
           <div
             className={`step clickable ${step == 2 ? 'active' : ''}`}
