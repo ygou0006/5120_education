@@ -7,6 +7,73 @@
 
 .chart-container {
   background: white;
-  padding: 1rem;
+  padding: 0.3rem;
   border-radius: 8px;
+}
+
+#overview, #description, #pathways, #requirements, #employment, #salary, #regional, #outlook {
+  scroll-margin-top: var(--scroll-offset, 130px);
+}
+
+@media (max-width: 768px) {
+  #overview, #description, #pathways, #requirements, #employment, #salary, #regional, #outlook {
+    scroll-margin-top: var(--scroll-offset, 170px);
+  }  
+}
+
+.anchor-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 16px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 2px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  position: sticky;
+  top: 62px;
+  z-index: 100;
+}
+
+.anchor-nav-item {
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  color: #555;
+  text-decoration: none;
+  background: #f5f5f5;
+  transition: all 0.2s;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.anchor-nav-item:hover {
+  background: #667eea;
+  color: white;
+}
+
+.anchor-nav-item.active {
+  background: #667eea;
+  color: white;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 88vh;
+  overflow-y: auto;
 }
