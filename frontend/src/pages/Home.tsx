@@ -75,19 +75,19 @@ const Home = () => {
             <Col>
               <div className="stat-card">
                 <h3>13M+</h3>
-                <p>Employed Australians</p>
+                <p><a href='https://www.careers.vic.gov.au/' target="_blank">Employed Australians</a></p>
               </div>
             </Col>
             <Col>
               <div className="stat-card">
                 <h3>700+</h3>
-                <p>Career Paths</p>
+                <p><a href='https://www.yourcareer.gov.au/career-pathways' target="_blank">Career Paths</a></p>
               </div>
             </Col>
             <Col>
               <div className="stat-card">
                 <h3>100+</h3>
-                <p>High School Courses</p>
+                <p><a href='https://www.vcaa.vic.edu.au/curriculum/vce-curriculum/vce-study-designs/vce-study-designs' target="_blank">High School Courses</a></p>
               </div>
             </Col>
           </Row>
@@ -125,7 +125,7 @@ const Home = () => {
 
       <section className="testimonials py-5">
         <Container>
-          <h2 className="text-center mb-4">Why Use Prospect</h2>
+          <h2 className="text-center mb-4">Why Use CareerWeave</h2>
           <Row xs={1} md={1} className="g-4">
             <Col>
               <div className="testimonial">

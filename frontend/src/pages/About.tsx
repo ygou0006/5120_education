@@ -5,14 +5,14 @@ const About = () => {
   return (
     <div className='about'>
       <div className="about-page">
-        <h1>About Prospect</h1>
+        <h1>About CareerWeave</h1>
         <p className="about-intro">
-          • Prospect is a career exploration platform designed for young people aged 12–17 in
-          Australia, including those in school and those outside formal schooling.<br />
+          • CareerWeave is a career exploration platform designed for young people aged 12–17 in
+          Victoria, Australia, including those in school and those outside formal schooling.<br />
           • Many young people find it difficult to understand how their learning choices, interests,
           and strengths connect to future career opportunities. For some, career information is
           fragmented or hard to access, making future planning even more challenging.<br />
-          • Prospect helps simplify this process by providing clear, accessible, and personalized
+          • CareerWeave helps simplify this process by providing clear, accessible, and personalized
           career exploration based on subjects, interests, and future opportunities.
         </p>
 
@@ -41,7 +41,7 @@ const About = () => {
         <section className="target-audience">
           <h2>Who Is This For?</h2>
           <p>
-            Prospect is designed for young people aged 12-17 in Australia who are:
+            CareerWeave is designed for young people aged 12-17 in  Victoria, Australia who are:
           </p>
           <ul>
             <li>Studying in school and exploring subject or elective choices</li>
