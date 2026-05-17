@@ -102,10 +102,21 @@ export interface FutureOutlook {
   projected_employment?: number;
   automation_risk_score?: number;
   emerging_industry: boolean;
+  vce_requirements?: string[];
   skills_in_demand?: string[];
 }
 
 export type FutureOutcome = FutureOutlook;
+
+export interface EmploymentProjection {
+  year_2025_employment?: number;
+  year_2030_employment?: number;
+  year_2035_employment?: number;
+  change_5yr_level?: number;
+  change_5yr_pct?: number;
+  change_10yr_level?: number;
+  change_10yr_pct?: number;
+}
 
 export interface Exploration {
   id: number;

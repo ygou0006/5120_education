@@ -120,12 +120,14 @@ const Admin = () => {
     projected_employment: number | '';
     automation_risk_score: number | '';
     emerging_industry: boolean;
+    vce_requirements: string;
     skills_in_demand: string;
   }>({
     projected_growth_rate: '',
     projected_employment: '',
     automation_risk_score: '',
     emerging_industry: false,
+    vce_requirements: '',
     skills_in_demand: ''
   });
 
@@ -413,6 +415,7 @@ const Admin = () => {
         projected_employment: res.data?.projected_employment ?? '',
         automation_risk_score: res.data?.automation_risk_score ?? '',
         emerging_industry: res.data?.emerging_industry ?? false,
+        vce_requirements: res.data?.vce_requirements?.join(', ') ?? '',
         skills_in_demand: res.data?.skills_in_demand?.join(', ') ?? ''
       });
     } catch (err: any) {
@@ -422,6 +425,7 @@ const Admin = () => {
           projected_employment: '',
           automation_risk_score: '',
           emerging_industry: false,
+          vce_requirements: '',
           skills_in_demand: ''
         });
       } else {
@@ -439,6 +443,7 @@ const Admin = () => {
         projected_employment: futureOutlookForm.projected_employment || undefined,
         automation_risk_score: futureOutlookForm.automation_risk_score || undefined,
         emerging_industry: futureOutlookForm.emerging_industry,
+        vce_requirements: futureOutlookForm.vce_requirements ? futureOutlookForm.vce_requirements.split(',').map(s => s.trim()).filter(Boolean) : undefined,
         skills_in_demand: futureOutlookForm.skills_in_demand ? futureOutlookForm.skills_in_demand.split(',').map(s => s.trim()).filter(Boolean) : undefined
       };
       try {
@@ -863,7 +868,7 @@ const Admin = () => {
                     <textarea value={careerForm.description} onChange={e => setCareerForm({...careerForm, description: e.target.value})} />
                   </div>
                   <div className="form-group">
-                    <label>Skill Level (1-5)</label>
+                    <label>Job Difficulty (1-5)</label>
                     <input type="number" min="1" max="5" value={careerForm.skill_level} onChange={e => setCareerForm({...careerForm, skill_level: parseInt(e.target.value)})} />
                   </div>
                   <div className="form-group">
@@ -1124,14 +1129,23 @@ const Admin = () => {
                 />
               </div>
               <div className="form-group">
-                <label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span style={{ whiteSpace: 'nowrap' }}>Emerging Industry</span>
                   <input 
                     type="checkbox"
                     checked={futureOutlookForm.emerging_industry} 
                     onChange={e => setFutureOutlookForm({...futureOutlookForm, emerging_industry: e.target.checked})}
                   />
-                  Emerging Industry
                 </label>
+              </div>
+              <div className="form-group">
+                <label>VCE Requirements (comma separated)</label>
+                <input 
+                  type="text"
+                  value={futureOutlookForm.vce_requirements} 
+                  onChange={e => setFutureOutlookForm({...futureOutlookForm, vce_requirements: e.target.value})}
+                  placeholder="e.g., Math Methods (Required)"
+                />
               </div>
               <div className="form-group">
                 <label>Skills in Demand (comma separated)</label>
@@ -1143,7 +1157,7 @@ const Admin = () => {
                 />
               </div>
               <div className="form-actions">
-                <button type="submit" disabled={loading}>{loading ? 'Saving...' : 'Save'}</button>
+                <button className='btn btn-gradient-sm' type="submit" disabled={loading}>{loading ? 'Saving...' : 'Save'}</button>
                 <button type="button" className="delete-btn" onClick={handleDeleteFutureOutlook}>Delete</button>
                 <button type="button" onClick={() => setShowFutureOutlookModal(false)}>Cancel</button>
               </div>

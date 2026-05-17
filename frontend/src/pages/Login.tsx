@@ -27,7 +27,7 @@ const Login = () => {
         <Col md={5} lg={4}>
           <Card className="auth-card shadow">
             <Card.Body className="p-4">
-              <h2 className="text-center mb-4">Login to Prospect</h2>
+              <h2 className="text-center mb-4">Login to CareerWeave</h2>
               {error && <Alert variant="danger">{error}</Alert>}
               <Form onSubmit={handleSubmit}>
                 <Form.Group className="mb-3">
